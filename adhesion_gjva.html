@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Adhésion GJVA</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('logo_gjva.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .login-container, .form-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      max-width: 500px;
+      margin: 80px auto;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    }
+    h2 {
+      text-align: center;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #formulaire {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page de connexion -->
+  <div class="login-container" id="login">
+    <h2>Connexion</h2>
+    <label>Nom d'utilisateur :</label>
+    <input type="text" id="username" placeholder="Entrez votre nom d'utilisateur" required>
+
+    <label>Mot de passe :</label>
+    <input type="password" id="password" placeholder="Mot de passe" required>
+
+    <button onclick="checkLogin()">Se connecter</button>
+  </div>
+
+  <!-- Formulaire d'adhésion -->
+  <div class="form-container" id="formulaire">
+    <h2>Bienvenue entre nous 🎉</h2>
+    <form id="adhesionForm">
+      <label>Nom :</label>
+      <input type="text" id="nom" required>
+
+      <label>Post-nom :</label>
+      <input type="text" id="postnom" required>
+
+      <label>Prénom :</label>
+      <input type="text" id="prenom" required>
+
+      <label>Sexe :</label>
+      <select id="sexe" required>
+        <option value="">-- Sélectionnez --</option>
+        <option value="Masculin">Masculin</option>
+        <option value="Féminin">Féminin</option>
+      </select>
+
+      <label>Téléphone :</label>
+      <input type="tel" id="telephone" placeholder="+243 ..." required>
+
+      <label>Email :</label>
+      <input type="email" id="email" required>
+
+      <label>Province d'origine :</label>
+      <select id="provinceOrigine" onchange="updateCommunes('provinceOrigine','communeOrigine')" required>
+        <option value="">-- Sélectionnez une province --</option>
+        <option value="Kinshasa">Kinshasa</option>
+        <option value="Haut-Katanga">Haut-Katanga</option>
+        <option value="Lualaba">Lualaba</option>
+        <option value="Sud-Kivu">Sud-Kivu</option>
+        <option value="Nord-Kivu">Nord-Kivu</option>
+      </select>
+
+      <label>Commune d'origine :</label>
+      <select id="communeOrigine" required>
+        <option value="">-- Sélectionnez une commune --</option>
+      </select>
+
+      <label>Province de résidence :</label>
+      <select id="provinceResidence" onchange="updateCommunes('provinceResidence','communeResidence')" required>
+        <option value="">-- Sélectionnez une province --</option>
+        <option value="Kinshasa">Kinshasa</option>
+        <option value="Haut-Katanga">Haut-Katanga</option>
+        <option value="Lualaba">Lualaba</option>
+        <option value="Sud-Kivu">Sud-Kivu</option>
+        <option value="Nord-Kivu">Nord-Kivu</option>
+      </select>
+
+      <label>Commune de résidence :</label>
+      <select id="communeResidence" required>
+        <option value="">-- Sélectionnez une commune --</option>
+      </select>
+
+      <button type="submit">Soumettre vos informations</button>
+    </form>
+
+    <div id="confirmation" style="display:none; margin-top:20px;">
+      <h3>Vérifiez vos informations :</h3>
+      <pre id="recap"></pre>
+      <button onclick="confirmSubmit()">Confirmer et envoyer</button>
+      <button onclick="editForm()">Modifier</button>
+    </div>
+
+    <div id="whatsapp" style="display:none; margin-top:20px; text-align:center;">
+      <p>✅ Merci ! Vous pouvez maintenant rejoindre notre groupe :</p>
+      <a href="https://chat.whatsapp.com/BSt5PcnJNxjFnHYx4uIucq" target="_blank">
+        <button>Rejoignez notre groupe WhatsApp</button>
+      </a>
+    </div>
+  </div>
+
+<script>
+  function checkLogin() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    if (password === "GJVA") {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("formulaire").style.display = "block";
+    } else {
+      alert("Mot de passe incorrect !");
+    }
+  }
+
+  const communes = {
+    "Kinshasa": ["Gombe", "Ngaliema", "Kasa-Vubu", "Lingwala", "Limete", "Makala", "Mont Ngafula", "Lemba", "Masina", "Ndjili"],
+    "Haut-Katanga": ["Lubumbashi", "Likasi", "Kolwezi", "Kipushi", "Kasumbalesa"],
+    "Lualaba": ["Kolwezi", "Lubudi", "Kakanda"],
+    "Sud-Kivu": ["Bukavu", "Walungu", "Idjwi", "Kalehe"],
+    "Nord-Kivu": ["Goma", "Butembo", "Beni", "Masisi"]
+  };
+
+  function updateCommunes(provinceId, communeId) {
+    let province = document.getElementById(provinceId).value;
+    let communeSelect = document.getElementById(communeId);
+    communeSelect.innerHTML = '<option value="">-- Sélectionnez une commune --</option>';
+    if (communes[province]) {
+      communes[province].forEach(function(c) {
+        let opt = document.createElement("option");
+        opt.value = c;
+        opt.innerHTML = c;
+        communeSelect.appendChild(opt);
+      });
+    }
+  }
+
+  document.getElementById("adhesionForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    let recap = `Nom: ${document.getElementById("nom").value}
+Post-nom: ${document.getElementById("postnom").value}
+Prénom: ${document.getElementById("prenom").value}
+Sexe: ${document.getElementById("sexe").value}
+Téléphone: ${document.getElementById("telephone").value}
+Email: ${document.getElementById("email").value}
+Province d'origine: ${document.getElementById("provinceOrigine").value}
+Commune d'origine: ${document.getElementById("communeOrigine").value}
+Province de résidence: ${document.getElementById("provinceResidence").value}
+Commune de résidence: ${document.getElementById("communeResidence").value}`;
+    document.getElementById("recap").innerText = recap;
+    document.getElementById("adhesionForm").style.display = "none";
+    document.getElementById("confirmation").style.display = "block";
+  });
+
+  function editForm() {
+    document.getElementById("confirmation").style.display = "none";
+    document.getElementById("adhesionForm").style.display = "block";
+  }
+
+  function confirmSubmit() {
+    alert("Vos informations ont été envoyées à GJVA ✅");
+    document.getElementById("confirmation").style.display = "none";
+    document.getElementById("whatsapp").style.display = "block";
+  }
+</script>
+
+</body>
+</html>
